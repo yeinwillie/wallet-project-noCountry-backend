@@ -27,35 +27,36 @@ const getUserById = async (req, res) => {
 //Crear Usuario
 const createUser = async (req, res) => {
 
-    // Verificando si el usuario existe
-    /*const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'Ya existe un usuario con el mismo correo electrónico' });
-    }*/
+  // Verificando si el usuario existe
+  const email = req.body.email;
+  const existingUser = await Users.findOne({ email });
+  if (existingUser) {
+    return res.status(400).json({ message: 'Ya existe un usuario con el mismo correo electrónico' });
+  }
+  
+  const salt = bcrypt.genSaltSync(10); //cantidad de saltos que da para encriptar, entre mas vuelta da es mas segura.
+  const passwordHash = bcrypt.hashSync(req.body.password, salt);
+  try {
+    const newUser = {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      password: passwordHash,
+      isActivated: req.body.isActivated || false,
+    };
+    const user = await Users.create(newUser);
+        const accessToken = jwt.sign({ id: user.email }, process.env.SECRET_KEY, {
+        expiresIn: process.env.JWT_EXPIRE_REGISTER,
+    });                                                                           
+   
+    //Enviar una respuesta al cliente
+    res.status(200).json({ usuario: newUser, accessToken, mensaje: "Usuario creado con exito" });                             // descomentar para el token
     
-    const salt = bcrypt.genSaltSync(10); //cantidad de saltos que da para encriptar, entre mas vuelta da es mas segura.
-    const passwordHash = bcrypt.hashSync(req.body.password, salt);
-    try {
-      const newUser = {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        password: passwordHash,
-        isActivated: req.body.isActivated || false,
-      };
-      const user = Users.create(newUser);
-        /* const accessToken = jwt.sign({ id: userFind.email }, process.env.SECRET_KEY, {
-          expiresIn: process.env.JWT_EXPIRE_REGISTER,
-      });    */                                                                        // descomentar para el token
-    // Enviar una respuesta al cliente
-       /* res.status(200).json({ accessToken });     */                               // descomentar para el token
-      res
-        .status(201)
-        .send({ mensaje: "Usuario creado con exito", usuario: newUser });             // COMENTAR PARA EL TOKEN
-    } catch (error) {
-      res.status(404).send(error);
-    }
-  };
+    
+  } catch (error) {
+    res.status(404).send(error);
+  }
+};
 
 //Modificar usuario
 const editUser = async (req, res) => {
