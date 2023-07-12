@@ -1,0 +1,21 @@
+.iconSidebar{
+    width: 16px;
+    object-fit: contain;
+}
+
+.btnSidebar{
+    display: flex;
+    padding: 12px 30px;
+    gap: 8px;
+    text-transform: none;
+    width: 219px;
+    cursor: pointer;
+}
+
+@media (hover:hover) {
+    .btnSidebar:hover{
+        border-radius: 10px;
+        background: #8D4EB5;
+        box-shadow: 0px 4px 54px 0px #8D4EB5;
+    }
+}

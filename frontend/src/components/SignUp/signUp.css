@@ -1,0 +1,64 @@
+.signup {
+  min-height: 100vh;
+  color: #F1F0EA;
+  padding-top: 150px;
+}
+
+.link-back {
+  margin-left: 2.5rem;
+  display: flex;
+  gap: .5rem;
+}
+
+.signup aside img {
+  width: 20px;
+}
+
+.signup main {
+  display: flex;
+  justify-content: center;
+  padding-top: 3rem;
+}
+
+.signup main section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 30%;
+}
+
+.signup form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 80%;
+}
+
+.signup h1 {
+  font-weight: 400;
+  font-size: 2rem;
+}
+
+.checkboxes {
+  display: flex;
+  flex-direction: column;
+}
+
+.checkboxes > * > * {
+  width: 100%;
+}
+
+.signup .signup-button {
+  text-align: center;
+}
+
+.link-login {
+  color: #6672DE;
+  text-decoration: underline;
+}
+
+.signup .text-sm {
+  font-size: 13px;
+  font-weight: 300;
+}

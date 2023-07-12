@@ -1,0 +1,22 @@
+.header{
+    border-radius: 10px;
+    background: linear-gradient(52deg, rgba(241, 240, 234, 0.12) 0%, rgba(241, 240, 234, 0.05) 50%, rgba(241, 240, 234, 0.06) 100%)!important;
+    backdrop-filter: blur(11.5px);
+    margin: 1rem;
+    width: calc(100vw - 2rem)!important;
+    height: 80px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo img {
+    width: 50px;
+}
+
+.toolbar {
+    padding-top: 1rem;
+}
