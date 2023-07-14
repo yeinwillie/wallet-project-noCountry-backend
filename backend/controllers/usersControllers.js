@@ -26,14 +26,17 @@ const getUserById = async (req, res) => {
 
 //Crear Usuario
 const createUser = async (req, res) => {
-
   // Verificando si el usuario existe
   const email = req.body.email;
   const existingUser = await Users.findOne({ email });
   if (existingUser) {
-    return res.status(400).json({ message: 'Ya existe un usuario con el mismo correo electrónico' });
+    return res
+      .status(400)
+      .json({
+        message: "Ya existe un usuario con el mismo correo electrónico",
+      });
   }
-  
+
   const salt = bcrypt.genSaltSync(10); //cantidad de saltos que da para encriptar, entre mas vuelta da es mas segura.
   const passwordHash = bcrypt.hashSync(req.body.password, salt);
   try {
@@ -45,18 +48,27 @@ const createUser = async (req, res) => {
       isActivated: req.body.isActivated || false,
     };
     const user = await Users.create(newUser);
-        const accessToken = jwt.sign({ id: user.email }, process.env.SECRET_KEY, {
-        expiresIn: process.env.JWT_EXPIRE_REGISTER,
-    });                                                                           
-   
+    const accessToken = jwt.sign({ id: user.email }, process.env.SECRET_KEY, {
+      expiresIn: process.env.JWT_EXPIRE_REGISTER,
+    });
+
     //Enviar una respuesta al cliente
-    res.status(200).json({ usuario: newUser, accessToken, mensaje: "Usuario creado con exito" });                             // descomentar para el token
-    
-    
+    res
+      .status(200)
+      .json({
+        mensaje: "Usuario creado con exito",
+        usuario: {
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          email: req.body.email,
+        },
+        accessToken,
+      }); // descomentar para el token
   } catch (error) {
     res.status(404).send(error);
   }
 };
+
 
 //Modificar usuario
 const editUser = async (req, res) => {
@@ -113,11 +125,16 @@ const loginUser = async (req, res) => {
       const passwordMatch = bcrypt.compareSync(passwordEnterByUser, passwordStoredInDB);
       
       if (passwordMatch) {
+        const payload = {
+          email: userFind.email,
+          firstName: userFind.firstName,
+          lastName: userFind.lastName,
+        };
         const accessToken = jwt.sign({ id: userFind.email }, process.env.SECRET_KEY, {
           expiresIn: process.env.JWT_EXPIRE_LOGIN,
         });
         
-        res.status(200).json({ accessToken, mensaje: "Usuario logueado con éxito" });
+        res.status(200).json({ accessToken,...payload, mensaje: "Usuario logueado con éxito" });
       } else {
         res.status(400).send({ mensaje: "Email y/o Contraseña incorrectos" });
       }

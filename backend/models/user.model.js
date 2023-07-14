@@ -4,7 +4,8 @@ const userSchema = new Schema({
     firstName: {
         type: String, 
         required: true
-    },
+    }, 
+
     lastName: {
         type: String, 
         required: true
@@ -20,6 +21,7 @@ const userSchema = new Schema({
         type: String, 
         required: true
     }, 
+   
 
     dateOfBirth: Date,
     dni: Number,
@@ -30,6 +32,8 @@ const userSchema = new Schema({
         zipcode: String
     },
       isActivated: Boolean,
-})
+}, /* {
+    timestamps:true
+} */)
 
 module.exports = model("User", userSchema)
