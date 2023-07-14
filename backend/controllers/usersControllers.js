@@ -102,34 +102,33 @@ const deleteUser = async (req, res) => {
 
 //Login usuario
 
-const loginUser = async(req, res)=>{
+const loginUser = async (req, res) => {
   try {
-      const email = req.body.email
-      const userFind = await Users.findOne({email})
-      if(userFind){
-          const passwordEnterByUser = req.body.password
-          const passwordStoredInDB = userFind.password
-          const passwordMatch = bcrypt.compareSync(passwordEnterByUser, passwordStoredInDB)
-          if(passwordMatch){
-
-
-         const accessToken = jwt.sign({ id: userFind.email }, process.env.SECRET_KEY, {
+    const email = req.body.email;
+    const userFind = await Users.findOne({ email });
+    
+    if (userFind) {
+      const passwordEnterByUser = req.body.password;
+      const passwordStoredInDB = userFind.password;
+      const passwordMatch = bcrypt.compareSync(passwordEnterByUser, passwordStoredInDB);
+      
+      if (passwordMatch) {
+        const accessToken = jwt.sign({ id: userFind.email }, process.env.SECRET_KEY, {
           expiresIn: process.env.JWT_EXPIRE_LOGIN,
-      });                                                                         
-      // Enviar una respuesta al cliente
-       res.status(200).json({ accessToken, mensaje: "Usuario logueado con éxito" });                                  
-                
-                  // comentar para el token
-          }else{
-              res.status(400).send({ mensaje: "Email o Contraseña incorrectos " })
-          }
+        });
+        
+        res.status(200).json({ accessToken, mensaje: "Usuario logueado con éxito" });
+      } else {
+        res.status(400).send({ mensaje: "Email y/o Contraseña incorrectos" });
       }
-
-
+    } else {
+      res.status(400).send({ mensaje: "El usuario no existe" });
+    }
   } catch (error) {
-      res.send(error)
+    res.send(error);
   }
 };
+
 
 //Reset password
 
