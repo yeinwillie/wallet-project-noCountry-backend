@@ -20,7 +20,7 @@ body('password').matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/).withM
 validateErrors,
 createUser)
 
-router.put('/:id', 
+router.put('/editUser', 
 body('firstName').notEmpty().withMessage('El nombre es obligatorio'),
 body('firstName').isLength({min: 3}).withMessage('El nombre debe tener al menos 3 caracteres'),
 body('lastName').notEmpty().withMessage('El apellido es obligatorio'),

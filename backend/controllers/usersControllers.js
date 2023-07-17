@@ -71,33 +71,33 @@ const createUser = async (req, res) => {
 
 
 //Modificar usuario
-const editUser = async (req, res) => {
-    const id = req.params.id;
-    const salt = bcrypt.genSaltSync(10);
-    const userEdited = {
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      dateOfBirth: req.body.dateOfBirth,
-      dni: req.body.dni,
-      nacionality: req.body.nacionality,
-      address: {
-        street: req.body.address.street,
-        number: req.body.address.number,
-        zipcode: req.body.address.zipcode
-      },
-      isActivated: req.body.isActivated,
-      
-    };
-    try {
-      const user = await Users.findByIdAndUpdate(id, userEdited);
-      res
-        .status(200)
-        .send({ mensaje: "Usuario modificado con éxito", user: userEdited });
-    } catch (error) {
-      res.status(404).send(error);
+const editUser = async (req, res) => { 
+  const email = req.body.email;
+  const userEdited = {
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.email,
+    dateOfBirth: req.body.dateOfBirth,
+    dni: req.body.dni,
+    nacionality: req.body.nacionality,
+    address: {
+      street: req.body.address.street,
+      number: req.body.address.number,
+      zipcode: req.body.address.zipcode,
+    },
+    isActivated: req.body.isActivated,
+  };
+  try {
+    // Buscar al usuario por su correo electrónico y actualizar los datos
+    const user = await Users.findOneAndUpdate({ email: email }, userEdited);
+    if (!user) {
+      return res.status(404).send({ mensaje: "Usuario no encontrado" });
     }
+    res.status(200).send({ mensaje: "Usuario modificado con éxito" });
+  } catch (error) {
+    res.status(500).send({ mensaje: "Error al actualizar el usuario" });
   }
+};
 
 //Eliminar usuario
 const deleteUser = async (req, res) => {
