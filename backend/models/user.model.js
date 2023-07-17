@@ -26,6 +26,7 @@ const userSchema = new Schema({
     dateOfBirth: Date,
     dni: Number,
     nacionality: String,
+    cbu: String,
     address: {
         street: String,
         number: Number,

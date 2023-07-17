@@ -2,6 +2,7 @@ const Users = require("../models/user.model");
 require("dotenv").config();
 const bcrypt = require ('bcrypt')
 const jwt = require('jsonwebtoken');
+const {generarCbuCompleto} = require("../utils/cbuUtils");
 
 //Obtener todos los usuario
 const getUsers = async (req, res) => {
@@ -72,6 +73,7 @@ const createUser = async (req, res) => {
 
 //Modificar usuario
 const editUser = async (req, res) => { 
+  const cbuFinal = await generarCbuCompleto();  
   const email = req.body.email;
   const userEdited = {
     firstName: req.body.firstName,
@@ -85,15 +87,18 @@ const editUser = async (req, res) => {
       number: req.body.address.number,
       zipcode: req.body.address.zipcode,
     },
-    isActivated: req.body.isActivated,
+    isActivated: true,
+    cbu: cbuFinal,
   };
+ 
   try {
     // Buscar al usuario por su correo electrónico y actualizar los datos
     const user = await Users.findOneAndUpdate({ email: email }, userEdited);
+    
     if (!user) {
       return res.status(404).send({ mensaje: "Usuario no encontrado" });
     }
-    res.status(200).send({ mensaje: "Usuario modificado con éxito" });
+    res.status(200).send({ mensaje: "Usuario modificado con éxito", userEdited  });
   } catch (error) {
     res.status(500).send({ mensaje: "Error al actualizar el usuario" });
   }
