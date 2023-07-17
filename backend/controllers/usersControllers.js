@@ -72,9 +72,38 @@ const createUser = async (req, res) => {
 
 
 //Modificar usuario
-const editUser = async (req, res) => { 
-  const cbuFinal = await generarCbuCompleto();  
+const editUser = async (req, res) => {   
   const email = req.body.email;
+  const user = await Users.findOne({ email: email });
+
+  // Si el usuario no esta registrado
+  if (!user) {
+    return res.status(404).send({ mensaje: "Usuario no encontrado" });
+  }
+
+  const VerificarSaldo = user.balance;
+  let cbuFinal = user.cbu;
+  let saldoRegalo;
+  // Verificar si el CBU existe para no editarlo
+  if (!cbuFinal) {
+    cbuFinal = await generarCbuCompleto();
+  }  
+  // Verificar si el saldo esta en 0 para entregar regalo de activaciono o recargarle el saldo para que siga operando
+  if (!VerificarSaldo || VerificarSaldo === 0 ) { // si activa por primera vez o el saldo le llega a cero se le regala 10000
+    saldoRegalo =  10000;
+  }   
+  
+  // verificar edad 
+
+  const dateOfBirth = new Date(req.body.dateOfBirth);
+  const currentDate = new Date();
+  const userAge = currentDate.getFullYear() - dateOfBirth.getFullYear();
+
+  // If the user is younger than 18, reject the request
+  if (userAge < 18) {
+    return res.status(400).send({ mensaje: "Debes ser mayor de 18 años para registrarte." });
+  }
+
   const userEdited = {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
@@ -89,17 +118,17 @@ const editUser = async (req, res) => {
     },
     isActivated: true,
     cbu: cbuFinal,
+    balance: saldoRegalo || user.balance,
   };
  
   try {
     // Buscar al usuario por su correo electrónico y actualizar los datos
     const user = await Users.findOneAndUpdate({ email: email }, userEdited);
     
-    if (!user) {
-      return res.status(404).send({ mensaje: "Usuario no encontrado" });
-    }
-    res.status(200).send({ mensaje: "Usuario modificado con éxito", userEdited  });
+   
+    res.status(200).send({ mensaje: "Usuario modificado con éxito", userEdited });
   } catch (error) {
+    
     res.status(500).send({ mensaje: "Error al actualizar el usuario" });
   }
 };

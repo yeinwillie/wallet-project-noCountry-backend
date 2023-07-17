@@ -20,13 +20,17 @@ const userSchema = new Schema({
     password: {
         type: String, 
         required: true
-    }, 
-   
+    },   
 
+    dni: {
+        type: Number, 
+        required: true
+    }, 
+    
     dateOfBirth: Date,
-    dni: Number,
     nacionality: String,
     cbu: String,
+    balance: Number,
     address: {
         street: String,
         number: Number,
