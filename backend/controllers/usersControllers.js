@@ -129,6 +129,7 @@ const loginUser = async (req, res) => {
           email: userFind.email,
           firstName: userFind.firstName,
           lastName: userFind.lastName,
+          isActivated: userFind.isActivated,
         };
         const accessToken = jwt.sign({ id: userFind.email }, process.env.SECRET_KEY, {
           expiresIn: process.env.JWT_EXPIRE_LOGIN,
