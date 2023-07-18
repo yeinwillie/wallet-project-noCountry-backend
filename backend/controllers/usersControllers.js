@@ -81,16 +81,16 @@ const editUser = async (req, res) => {
     return res.status(404).send({ mensaje: "Usuario no encontrado" });
   }
 
-  const VerificarSaldo = user.balance;
-  let cbuFinal = user.cbu;
-  let saldoRegalo;
+  const checkBalance = user.balance;
+  let finalCbu = user.cbu;
+  let giftBalance;
   // Verificar si el CBU existe para no editarlo
-  if (!cbuFinal) {
-    cbuFinal = await generarCbuCompleto();
+  if (!finalCbu) {
+    finalCbu = await generarCbuCompleto();
   }  
   // Verificar si el saldo esta en 0 para entregar regalo de activaciono o recargarle el saldo para que siga operando
-  if (!VerificarSaldo || VerificarSaldo === 0 ) { // si activa por primera vez o el saldo le llega a cero se le regala 10000
-    saldoRegalo =  10000;
+  if (!checkBalance || checkBalance === 0 ) { // si activa por primera vez o el saldo le llega a cero se le regala 10000
+    giftBalance =  12000;
   }   
   
   // verificar edad 
@@ -99,7 +99,7 @@ const editUser = async (req, res) => {
   const currentDate = new Date();
   const userAge = currentDate.getFullYear() - dateOfBirth.getFullYear();
 
-  // If the user is younger than 18, reject the request
+  // Si el usuario es menos de 18 años no se puede registrar
   if (userAge < 18) {
     return res.status(400).send({ mensaje: "Debes ser mayor de 18 años para registrarte." });
   }
@@ -117,8 +117,8 @@ const editUser = async (req, res) => {
       zipcode: req.body.address.zipcode,
     },
     isActivated: true,
-    cbu: cbuFinal,
-    balance: saldoRegalo || user.balance,
+    cbu: finalCbu,
+    balance: giftBalance || user.balance,
   };
  
   try {
