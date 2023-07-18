@@ -24,7 +24,7 @@ const userSchema = new Schema({
 
     dni: {
         type: Number, 
-        required: true
+        unique: true,
     }, 
     
     dateOfBirth: Date,
