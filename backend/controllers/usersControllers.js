@@ -169,6 +169,7 @@ const loginUser = async (req, res) => {
           dateOfBirth: userFind.dateOfBirth,
           nacionality: userFind.nacionality,
           address: userFind.address,
+          dni: userFind.dni, 
         };
         const accessToken = jwt.sign({ id: userFind.email }, process.env.SECRET_KEY, {
           expiresIn: process.env.JWT_EXPIRE_LOGIN,
