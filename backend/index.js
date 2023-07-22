@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 1237
 const cors = require ('cors')
 const { initDBConnection } = require('./data/dbConnection');
 const usersRouter = require('./routes/users.routes')
+const transactionsRoutes = require ('./routes/transactions.routes')
 
 
 
@@ -16,6 +17,7 @@ app.get('/', (req, res)=>{
 })
 
 app.use ('/api/users', usersRouter)
+app.use ('/api/transactions', transactionsRoutes)
 
 app.listen(PORT, ()=>{
     initDBConnection();
