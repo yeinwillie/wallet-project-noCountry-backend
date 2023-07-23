@@ -30,7 +30,10 @@ const userSchema = new Schema({
     dateOfBirth: Date,
     nacionality: String,
     cbu: String,
-    balance: Number,
+    balance: {
+        type: Number, 
+        default: 0
+    },
     code: { type: String},
 
     emailstatus: { 
