@@ -39,7 +39,7 @@ validateErrors,
 jwtValidation,
 editUser)
 
-
+ 
 router.delete("/:id", jwtValidation, deleteUser)
 
 

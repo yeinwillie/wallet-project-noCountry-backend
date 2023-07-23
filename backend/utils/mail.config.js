@@ -11,7 +11,7 @@ const oAuth2client = new google.auth.OAuth2(
   CLIENT_ID,
   CLIENT_SECRET,
   REDIRECT_URI,
-);
+); 
 
 oAuth2client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
@@ -51,26 +51,7 @@ async function sendVerificationEmail(user, registerToken) {
     
   } 
   
-
-  /*const getTemplate = (firstName, token) => {
-      return `
-        <head>
-            <link rel="stylesheet" href="./style.css">
-        </head>
-        
-        <div id="email___content">
-            <img src="../public/ImagenEmail.png" alt="">
-            <h2>Hola ${ firstName }</h2>
-            <p>Para confirmar tu cuenta, ingresa al siguiente enlace</p>
-            <a
-                href="https://wallet-project-nocountry-backend-production-y.up.railway.app/api/users/confirm/${ token }"
-                target="_blank"
-            >Confirmar Cuenta</a>
-        </div>
-      `;
-  }*/
-
-  module.exports = {
+ module.exports = {
     sendVerificationEmail,
     /*getTemplate*/
   }
