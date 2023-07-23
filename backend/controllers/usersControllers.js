@@ -121,7 +121,7 @@ const emailConfirm = async (req, res) => {
     await user.save();
 
     // Redireccionar a la confirmación
-    return res.redirect('/confirm');
+    return res.redirect('/confirm.html');
   } catch (error) {
     console.log(error);
     return res.json({

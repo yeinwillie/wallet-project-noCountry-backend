@@ -16,9 +16,9 @@ app.get('/', (req, res)=>{
     res.send({ mensaje: "Hola Backend" })
 })
 
-app.get('/api/users/confirm/:token', (req, res) => {
+app.get('/confirm.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'confirm.html'));
-  });
+  }); // Ruta para la confirmacion del correo, no pasa por la api es interna
 
 app.use ('/api/users', usersRouter)
 app.use ('/api/transactions', transactionsRoutes)
