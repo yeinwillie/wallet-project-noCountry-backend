@@ -3,6 +3,8 @@ require("dotenv").config();
 const bcrypt = require ('bcrypt')
 const jwt = require('jsonwebtoken');
 const {generarCbuCompleto} = require("../utils/cbuUtils");
+const { v4: uuidv4 } = require('uuid');
+const { sendVerificationEmail } = require('../utils/mail.config.js');
 
 //Obtener todos los usuario
 const getUsers = async (req, res) => {
@@ -32,11 +34,14 @@ const createUser = async (req, res) => {
   const existingUser = await Users.findOne({ email });
   if (existingUser) {
     return res
-      .status(400)
+      .status(400) 
       .json({
         message: "Ya existe un usuario con el mismo correo electrónico",
       });
   }
+
+  // Generar el código para validar email
+  const code = uuidv4();
 
   const salt = bcrypt.genSaltSync(10); //cantidad de saltos que da para encriptar, entre mas vuelta da es mas segura.
   const passwordHash = bcrypt.hashSync(req.body.password, salt);
@@ -47,29 +52,84 @@ const createUser = async (req, res) => {
       email: req.body.email,
       password: passwordHash,
       isActivated: req.body.isActivated || false,
-    };
-    const user = await Users.create(newUser);
-    const accessToken = jwt.sign({ id: user.email }, process.env.SECRET_KEY, {
+      code: code,
+      emailstatus: "UNVERIFIED",
+    };   
+
+    /*// Obtener un template
+      const template = getTemplate(newUser.firstName, accessToken);*/
+
+    // se guarda el usuario
+      const user = await Users.create(newUser);
+
+    // genera el token
+    const registerToken = jwt.sign({ id: newUser.email, code: newUser.code }, process.env.SECRET_KEY, {
       expiresIn: process.env.JWT_EXPIRE_REGISTER,
     });
 
+    // Enviar el email
+      await sendVerificationEmail(user, registerToken);
+      
     //Enviar una respuesta al cliente
     res
       .status(200)
       .json({
         mensaje: "Usuario creado con exito",
         usuario: {
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          email: req.body.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          //code: user.code,
         },
-        accessToken,
-      }); // descomentar para el token
+        registerToken,
+      }); 
   } catch (error) {
     res.status(404).send(error);
   }
 };
 
+// Confirmacion de correo electronico valido
+
+const emailConfirm = async (req, res) => {
+  try {
+    // Obtener el token
+    const  registerToken  = req.params.registertoken;
+    console.log(registerToken)
+
+    // Verificar la data
+    const data = jwt.verify(registerToken, process.env.SECRET_KEY);
+
+    const { id, code } = data;
+
+    // Verificar existencia del usuario
+    const user = await Users.findOne({ email: id });
+
+    if (!user) {
+      return res.json({
+        success: false,
+        msg: 'Usuario no existe',
+      });
+    } 
+
+    // Verificar el código
+    if (code !== user.code) {
+      return res.redirect('/error.html');
+    }
+
+    // Actualizar usuario
+    user.emailstatus = "VERIFIED";
+    await user.save();
+
+    // Redireccionar a la confirmación
+    return res.redirect('/confirm');
+  } catch (error) {
+    console.log(error);
+    return res.json({
+      success: false,
+      msg: 'Error al confirmar usuario',
+    });
+  }
+};
 
 //Modificar usuario
 const editUser = async (req, res) => {   
@@ -219,4 +279,5 @@ module.exports = {
   createUser,
   editUser,
   deleteUser,
+  emailConfirm,
 };

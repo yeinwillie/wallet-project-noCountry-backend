@@ -1,5 +1,5 @@
 const Router = require('express')
-const {getUsers, getUserById, editUser,  createUser, deleteUser, resetPassword, loginUser} =require('../controllers/usersControllers')
+const {getUsers, getUserById, editUser,  createUser, deleteUser, resetPassword, loginUser, emailConfirm} =require('../controllers/usersControllers')
 const router = Router()
 const { body } = require('express-validator');
 const {validateErrors }= require('../middlewares/validateErrors');
@@ -63,5 +63,10 @@ router.patch("/reset/password"
     jwtValidation
 ]
 , resetPassword)
+
+router.get("/confirm/:registertoken",
+    
+    emailConfirm
+); 
 
 module.exports = router

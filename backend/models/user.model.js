@@ -20,7 +20,7 @@ const userSchema = new Schema({
     password: {
         type: String, 
         required: true
-    },   
+    },    
 
     dni: {
         type: Number, 
@@ -31,6 +31,12 @@ const userSchema = new Schema({
     nacionality: String,
     cbu: String,
     balance: Number,
+    code: { type: String},
+
+    emailstatus: { 
+        type: String,
+        default: "UNVERIFIED" },
+        
     address: {
         street: String,
         number: Number,
