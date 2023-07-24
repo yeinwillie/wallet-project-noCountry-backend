@@ -31,11 +31,11 @@ const getTransactionById = async (req, res) => {
 
 // Enviar dinero
 const createTransaction = async (req, res) => {
-const senderIdentifier  = req.body.sender; // Puede ser el email, dni o cbu del remitente
-  const recipientIdentifier = req.body.recipient; // Puede ser el email, dni o cbu del remitente
+const senderIdentifier  = req.body.sender; // Puede dni o cbu del remitente
+  const recipientIdentifier = req.body.recipient; // Puede ser dni o cbu del remitente
   const amount = req.body.amount;
 
- // Definimos una función para buscar al usuario por su identificador (email, dni o cbu)
+ // Definimos una función para buscar al usuario por su identificador (dni o cbu)
  const findUserByIdentifier = async (identifier) => {
   const user = await Users.findOne({
     $or: [{ email: identifier },{ dni: identifier }, { cbu: identifier }],
@@ -64,8 +64,8 @@ try {
 
    // Creamos la nueva transacción con el ID del remitente obtenido desde el modelo de usuario
    const newTransaction = {
-    sender: senderUser.id,// Aquí utilizamos el campo '_id' del usuario como el valor del campo 'sender'
-    recipient: recipientUser.id,
+    sender: senderUser._id,// Aquí utilizamos el campo '_id' del usuario como el valor del campo 'sender'
+    recipient: recipientUser._id,
     amount: amount,
     detail: req.body.detail,
   };
@@ -79,7 +79,15 @@ try {
         await senderUser.save();
         await recipientUser.save();
     
-        res.status(200).json({ mensaje: "Transaccion creada con exito", transaction });
+        res.status(200).json({ mensaje: "Transaccion creada con exito",  transaction: {
+          recipient: {
+            name: `${recipientUser.firstName} ${recipientUser.lastName}`,
+            amount: transaction.amount,
+            detail: transaction.detail,
+            date: transaction.date,
+          },
+         
+        }, });
 
       } catch (error) {
         console.log(error);
@@ -88,47 +96,6 @@ try {
     };
 
 
-
-  // Definimos una función para buscar al usuario por su identificador (email, dni o cbu)
-  /* const senderUser = await Users.findOne({ email: sender });
-  if (!senderUser) {
-    return res.status(400).json({
-      message: "El remitente no existe",
-    });
-  }
-
-  if (senderUser.balance < amount) {
-    return res.status(400).json({ message: "El remitente no tiene suficiente saldo" });
-  }
-
-  const recipientUser = await Users.findOne({ email: recipient });
-  if (!recipientUser) {
-    return res.status(400).json({ message: "El destinatario no existe" });
-  }
-
-  try {
-    const newTransaction = {
-      recipient: recipient,
-      amount: amount,
-      detail: req.body.detail,
-    };
-    const transaction = await Transactions.create(newTransaction);
-
-    // Actualizar los saldos del remitente y del destinatario
-    senderUser.balance -= amount;
-    recipientUser.balance += amount;
-
-    // Guardar los cambios en la base de datos
-    await senderUser.save();
-    await recipientUser.save();
-
-    res.status(200).json({
-      mensaje: "Transaccion creada con exito",
-      transaction: transaction,
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Ha ocurrido un error al procesar la transaccion" });
-  } */ 
 
 
 module.exports = {
