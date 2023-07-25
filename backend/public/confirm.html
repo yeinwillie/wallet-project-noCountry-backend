@@ -1,48 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmar Email</title>
-    <style>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+  <title>Confirmar Email</title>
+  <style>
     body {
-      display: flex;
-      justify-content: center;
       align-items: center;
+      background: linear-gradient(46deg, #121832 11.98%, #503853 44.79%, #140F26 78.13%);
+      display: flex;
+      font-family: 'Poppins', sans-serif;
       height: 100vh;
+      justify-content: center;
       margin: 0;
-      background-color: #f5f5f5;
+      width: 100vw;
     }
 
     .container {
-      text-align: center;
+      background: linear-gradient(52deg, rgba(241, 240, 234, 0.12) 0%, rgba(241, 240, 234, 0.05) 50%, rgba(241, 240, 234, 0.06) 100%) !important;
+      backdrop-filter: blur(11.5px);
       border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-      background-color: #ffffff;
+      color: #F1F0EA;
+      padding-bottom: 20px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .tittle {
+      font-size: 2rem;
     }
 
     .alert_success {
       font-size: 24px;
-      color: #ba31d9;
+      font-weight: 300;
       margin: 0;
-      padding: 10px;
+      padding-bottom: 20px;
     }
 
-    .alert_success::before {
-      content: "\2714"; /* Unicode checkmark character */
-      font-size: 30px;
-      margin-right: 10px;
+    .login_button {
+      background: linear-gradient(90deg, #7565FC 0%, #8D4EB5 100%);
+      border: none;
+      border-radius: 0.625rem;
+      box-shadow: 0px 4px 54px 0px #8D4EB5;  
+      height: 3rem;
+      padding: 0 2rem;
+    }
+
+    a {    
+      color: #F1F0EA;
+      font-family: 'Poppins', sans-serif;
+      text-decoration: none;
     }
   </style>
-
-    
 </head>
+
 <body>
-    
-    <div class="container">
-        <p class="alert_success"> Cuenta de correo confirmada correctamente<br>¡Correo confirmado!</p>
-    </div>
+  <div class="container">
+    <p class="tittle"><b>Pocketpal</b></p>
+    <p class="alert_success">¡Correo confirmado!</p>
+    <button class="login_button"><a href="https://pocketpal-66fc9.web.app/login">Iniciar
+        sesión</a></button>
+  </div>
 </body>
+
 </html>
