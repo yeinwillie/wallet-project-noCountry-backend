@@ -299,7 +299,7 @@ const resetPassword = async (req, res) => {
       const passwordHash = bcrypt.hashSync(newPassword, salt);
       userFind.password = passwordHash;
       userFind.save();
-      res.status(200).send({ mensaje: "Contraseña reseteada con exito" });
+      res.status(200).send({ mensaje: "Contraseña cambiada con exito" });
     } else {
       res.status(400).send({ mensaje: "Usuario no encontrado" });
     }
