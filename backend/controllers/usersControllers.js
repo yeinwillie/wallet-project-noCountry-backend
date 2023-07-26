@@ -261,7 +261,7 @@ const loginUser = async (req, res) => {
             accessToken,
           });
       } else {
-        res.status(400).send({ mensaje: "Email o Contraseña incorrectos " });
+        res.status(400).send({ mensaje: "Email y/o Contraseña incorrectos " });
       }
     }
   } catch (error) {
