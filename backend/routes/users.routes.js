@@ -1,5 +1,5 @@
 const Router = require('express')
-const {getUsers, getUserById, editUser,  createUser, deleteUser, resetPassword, loginUser, emailConfirm} =require('../controllers/usersControllers')
+const {getUsers, getUserById, editUser,  createUser, deleteUser, resetPassword, loginUser, emailConfirm, recoverypassword} =require('../controllers/usersControllers')
 const router = Router()
 const { body } = require('express-validator');
 const {validateErrors }= require('../middlewares/validateErrors');
