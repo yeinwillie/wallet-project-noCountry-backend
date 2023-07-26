@@ -140,7 +140,18 @@ const editUser = async (req, res) => {
   // Si el usuario no esta registrado
   if (!user) {
     return res.status(404).send({ mensaje: "Usuario no encontrado" });
-  }
+  };
+
+   // Verificando si el dni del usuario existe
+   const dni = req.body.dni;
+   const existingDni = await Users.findOne({ dni });
+   if (existingDni) {
+     return res
+       .status(400) 
+       .json({
+         message: "Ya existe un usuario con el mismo Dni",
+       });
+   }
 
   const checkBalance = user.balance;
   let finalCbu = user.cbu;
