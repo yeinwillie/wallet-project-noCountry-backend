@@ -1,10 +1,11 @@
 const Users = require("../models/user.model");
 require("dotenv").config();
-const bcrypt = require ('bcrypt')
-const jwt = require('jsonwebtoken');
-const {generarCbuCompleto} = require("../utils/cbuUtils");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const {generarCbuCompleto} = require("../utils/cbuUtils.js");
 const { v4: uuidv4 } = require('uuid');
-const { sendVerificationEmail } = require('../utils/mail.config.js');
+const { sendVerificationEmail , sendrecoveryPasswordEmail } = require('../utils/mail.config.js');
+const { generateRandomPassword } = require('../utils/randomPassword.js');
 
 //Obtener todos los usuario
 const getUsers = async (req, res) => {
@@ -91,10 +92,10 @@ const createUser = async (req, res) => {
 // Confirmacion de correo electronico valido
 
 const emailConfirm = async (req, res) => {
-  try {
+  try { 
     // Obtener el token
     const  registerToken  = req.params.registertoken;
-    console.log(registerToken)
+    console.log(registerToken+"b")
 
     // Verificar la data
     const data = jwt.verify(registerToken, process.env.SECRET_KEY);
@@ -212,12 +213,13 @@ const loginUser = async (req, res) => {
   try {
     const email = req.body.email;
     const userFind = await Users.findOne({ email });
-    
     if (userFind) {
       const passwordEnterByUser = req.body.password;
       const passwordStoredInDB = userFind.password;
-      const passwordMatch = bcrypt.compareSync(passwordEnterByUser, passwordStoredInDB);
-      
+      const passwordMatch = bcrypt.compareSync(
+        passwordEnterByUser,
+        passwordStoredInDB
+      );
       if (passwordMatch) {
         const payload = {
           email: userFind.email,
@@ -229,24 +231,31 @@ const loginUser = async (req, res) => {
           dateOfBirth: userFind.dateOfBirth,
           nacionality: userFind.nacionality,
           address: userFind.address,
-          dni: userFind.dni, 
+          dni: userFind.dni,
         };
-        const accessToken = jwt.sign({ id: userFind.email }, process.env.SECRET_KEY, {
-          expiresIn: process.env.JWT_EXPIRE_LOGIN,
-        });
-        
-        res.status(200).json({ accessToken,...payload, mensaje: "Usuario logueado con éxito" });
+        const accessToken = jwt.sign(
+          { id: userFind.email },
+          process.env.SECRET_KEY,
+          {
+            expiresIn: process.env.JWT_EXPIRE_LOGIN,
+          }
+        );
+        // Enviar una respuesta al cliente
+        res
+          .status(200)
+          .json({
+            mensaje: "Usuario logueado con éxito",
+            ...payload,
+            accessToken,
+          });
       } else {
-        res.status(400).send({ mensaje: "Email y/o Contraseña incorrectos" });
+        res.status(400).send({ mensaje: "Email o Contraseña incorrectos " });
       }
-    } else {
-      res.status(400).send({ mensaje: "El usuario no existe" });
     }
   } catch (error) {
     res.send(error);
   }
 };
-
 
 //Reset password
 
@@ -270,6 +279,49 @@ const resetPassword = async (req, res) => {
   }
 };
 
+//recovery password 
+
+const recoverypassword = async (req,res) => {
+  try {
+
+    // Verificando si el usuario existe
+
+    const email = req.body.email;
+    const existingUser = await Users.findOne({email});
+    if (!existingUser) {
+      res.status(400).send({message:"Verifica tu correo electronico",});
+    }
+
+    console.log(existingUser);
+    // Creando nueva clave para el usuario (6 numero, 1 mayuscula y 1minuscula)
+
+    const recovPassword = generateRandomPassword();
+
+    console.log(recovPassword);
+    // Hasheando la clave creada
+    
+    const salt = bcrypt.genSaltSync(10); //cantidad de saltos que da para encriptar, entre mas vuelta da es mas segura.
+    const recovPasswordHash = bcrypt.hashSync(recovPassword, salt);
+    
+    console.log(recovPasswordHash);
+    // Guardando la nueva clave en la base de datos
+
+    existingUser.password = recovPasswordHash;
+    existingUser.save();
+
+    
+
+    // enviar la clave por correo
+    await sendrecoveryPasswordEmail(existingUser, recovPassword);
+
+    // Se envia la respuesta positiva
+
+    res.status(200).send({ mensaje: "Nueva contraseña enviada al correo del usuario"});
+
+  } catch (error) {
+    res.status(400).send({message:"Intento de recuperacion de contraseña invalido"})
+  }
+};
 
 module.exports = {
   loginUser,
@@ -280,4 +332,7 @@ module.exports = {
   editUser,
   deleteUser,
   emailConfirm,
+  recoverypassword,
+  
+  
 };

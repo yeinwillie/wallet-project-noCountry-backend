@@ -68,5 +68,12 @@ router.get("/confirm/:registertoken",
     
     emailConfirm
 ); 
+router.patch("/recoverypassword"
+,[
+    body('email').isEmail().withMessage('El email debe ser un email válido'),
+    validateErrors ,
+    jwtValidation
+]
+, recoverypassword);
 
 module.exports = router
