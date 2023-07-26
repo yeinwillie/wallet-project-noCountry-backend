@@ -274,12 +274,29 @@ const loginUser = async (req, res) => {
 const resetPassword = async (req, res) => {
   try {
     const email = req.body.email;
+    const password = req.body.password;    
+
     let userFind = await Users.findOne({ email });
-    console.log(userFind);
-    if (userFind) {
-      const password = req.body.password;
+
+    if (!userFind) {
+      return res.status(400).send({ mensaje: "Usuario no encontrado" });
+    }
+   
+    const passwordEnterByUser = req.body.password;
+    const passwordStoredInDB = userFind.password;
+    const passwordMatch = bcrypt.compareSync(
+        passwordEnterByUser,
+        passwordStoredInDB
+      )
+
+    if (!passwordMatch) {
+      return res.status(400).send({ mensaje: "Contraseña actual incorrecta" });
+    }
+      
+    if (userFind && passwordMatch) {
+      const newPassword = req.body.newPassword;
       const salt = bcrypt.genSaltSync(10);
-      const passwordHash = bcrypt.hashSync(password, salt);
+      const passwordHash = bcrypt.hashSync(newPassword, salt);
       userFind.password = passwordHash;
       userFind.save();
       res.status(200).send({ mensaje: "Contraseña reseteada con exito" });
@@ -287,10 +304,10 @@ const resetPassword = async (req, res) => {
       res.status(400).send({ mensaje: "Usuario no encontrado" });
     }
   } catch (error) {
-    res.send(error);
+    console.error("Error en la función resetPassword:", error);
+    res.status(500).send({ mensaje: "Error interno del servidor" });
   }
 };
-
 //recovery password 
 
 const recoverypassword = async (req,res) => {
