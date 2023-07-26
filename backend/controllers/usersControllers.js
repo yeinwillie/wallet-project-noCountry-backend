@@ -237,6 +237,7 @@ const loginUser = async (req, res) => {
           firstName: userFind.firstName,
           lastName: userFind.lastName,
           isActivated: userFind.isActivated,
+          emailstatus: userFind.emailstatus,
           cbu: userFind.cbu,
           balance: userFind.balance,
           dateOfBirth: userFind.dateOfBirth,
