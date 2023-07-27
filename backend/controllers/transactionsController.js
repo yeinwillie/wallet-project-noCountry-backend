@@ -3,15 +3,37 @@ const Users = require("../models/user.model");
 require("dotenv").config();
 
 //Obtener Historial de transacciones
+//Obtener Historial de transacciones
 const getTransactions = async (req, res) => {
   try {
-    const transactions = await Transactions.find();
-    res.send(transactions);
+    const transactions = await Transactions.find()
+      .populate("sender", "firstName lastName")
+      .populate("recipient", "firstName lastName");
+
+    // Creamos un arreglo para almacenar las transacciones con la información de los nombres de las personas involucradas
+    const transactionsNames = transactions.map((transaction) => {
+      const senderName = transaction.sender
+        ? `${transaction.sender.firstName} ${transaction.sender.lastName}`
+        : "Remitente no encontrado";
+      const recipientName = transaction.recipient
+        ? `${transaction.recipient.firstName} ${transaction.recipient.lastName}`
+        : "Destinatario no encontrado";
+
+      return {
+        _id: transaction._id,
+        senderName,
+        recipientName,
+        amount: transaction.amount,
+        detail: transaction.detail,
+        date: transaction.date,
+      };
+    });
+
+    res.send(transactionsNames);
   } catch (error) {
     res.status(404).send(error);
   }
 };
-
 //Obtener transaccion con ID
 const getTransactionById = async (req, res) => {
   const transactionId = req.params.id;
