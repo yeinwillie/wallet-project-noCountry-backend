@@ -3,7 +3,6 @@ const Users = require("../models/user.model");
 require("dotenv").config();
 
 //Obtener Historial de transacciones
-//Obtener Historial de transacciones
 const getTransactions = async (req, res) => {
   try {
     const transactions = await Transactions.find()
